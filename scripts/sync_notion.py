@@ -158,8 +158,12 @@ def _rich(text):
     for m in pattern.finditer(text):
         if pos < m.start():
             parts.append({"type": "text", "text": {"content": text[pos:m.start()]}})
-        if m.group(1):   # link
-            parts.append({"type": "text", "text": {"content": m.group(1), "link": {"url": m.group(2)}}})
+        if m.group(1):   # link – only absolute URLs are valid in Notion
+            url = m.group(2)
+            if url.startswith("http://") or url.startswith("https://"):
+                parts.append({"type": "text", "text": {"content": m.group(1), "link": {"url": url}}})
+            else:
+                parts.append({"type": "text", "text": {"content": m.group(1)}})
         elif m.group(3): # bold
             parts.append({"type": "text", "text": {"content": m.group(3)}, "annotations": {"bold": True}})
         elif m.group(4): # code
