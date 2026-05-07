@@ -1,0 +1,31 @@
+name: Sync BOM to Notion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "hardware/*.kicad_sch"
+      - "scripts/sync_bom_to_notion.py"
+  workflow_dispatch: # allow manual trigger from GitHub UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Sync BOM to Notion
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+        run: python scripts/sync_bom_to_notion.py
