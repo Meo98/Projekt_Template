@@ -30,7 +30,7 @@ project/
 │   │   └── case.scad      # Parametric OpenSCAD enclosure → edit board dims
 │   └── datasheets/        # Component PDFs (vendor reference)
 ├── scripts/
-│   └── sync_bom_to_notion.py  # Syncs BOM to Notion Bauteil-Bibliothek
+│   └── sync_notion.py  # Syncs BOM to Notion Bauteil-Bibliothek
 └── .github/workflows/
     └── notion-bom-sync.yml    # Auto-runs on push when kicad/*.kicad_sch changes
 ```

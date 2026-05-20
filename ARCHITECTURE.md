@@ -31,7 +31,7 @@ project/
 │   │   └── case.scad      # Parametric OpenSCAD enclosure
 │   └── datasheets/        # PDF datasheets for all components (vendor reference)
 ├── scripts/               # Automation scripts (not deployed to Pico)
-│   └── sync_bom_to_notion.py
+│   └── sync_notion.py
 └── .github/workflows/     # GitHub Actions CI/CD
     └── notion-bom-sync.yml
 ```
