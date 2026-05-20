@@ -437,7 +437,7 @@ def main():
     print(f"Project: {name}")
     print(f"GitHub:  {github_url or '(none)'}")
 
-    sch_files = list(Path(".").glob("hardware/*.kicad_sch")) or list(Path(".").glob("**/*.kicad_sch"))
+    sch_files = list(Path(".").glob("hardware/kicad/*.kicad_sch")) or list(Path(".").glob("**/*.kicad_sch"))
     bom = []
     if sch_files:
         for sch in sch_files:

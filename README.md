@@ -19,18 +19,27 @@ project/
 │   ├── modules/           # Button, Fade – reusable drivers
 │   ├── lib/               # Third-party libraries
 │   └── utils/             # Helper functions
-├── hardware/              # KiCad project
-│   ├── Template.kicad_pro # → rename to your project name
-│   ├── Template.kicad_sch
-│   ├── Template.kicad_pcb
-│   ├── components/        # Custom footprint libraries
-│   ├── datasheets/        # Component PDFs
-│   └── gerbers/           # PCB manufacturing files
+├── hardware/              # Hardware design (electrical + mechanical)
+│   ├── kicad/             # KiCad project (electrical)
+│   │   ├── Template.kicad_pro  # → rename to your project name
+│   │   ├── Template.kicad_sch
+│   │   ├── Template.kicad_pcb
+│   │   ├── components/    # Custom symbol + footprint libraries
+│   │   └── gerbers/       # PCB manufacturing files
+│   ├── cad/               # Mechanical CAD (enclosure)
+│   │   └── case.scad      # Parametric OpenSCAD enclosure → edit board dims
+│   └── datasheets/        # Component PDFs (vendor reference)
 ├── scripts/
 │   └── sync_bom_to_notion.py  # Syncs BOM to Notion Bauteil-Bibliothek
 └── .github/workflows/
-    └── notion-bom-sync.yml    # Auto-runs on push when .kicad_sch changes
+    └── notion-bom-sync.yml    # Auto-runs on push when kicad/*.kicad_sch changes
 ```
+
+**Aufteilung `hardware/`**: `kicad/` (elektrisch, inkl. Gerbers als generierter
+Output) und `cad/` (mechanisch, OpenSCAD-Gehäuse) — getrennt, weil es zwei
+Disziplinen sind. `datasheets/` bleibt eigenständig (Hersteller-Docs, kein Output).
+Die KiCad lib-tables nutzen `${KIPRJMOD}/components/...`, was gültig bleibt weil
+`.kicad_pro` und `components/` zusammen in `kicad/` liegen.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full code patterns, rules, and how to add features.
 
@@ -53,7 +62,7 @@ cd Pico_Template
 cd MyProjectName
 ```
 
-This creates the GitHub repo, sets the `NOTION_TOKEN` secret automatically, and clones the project locally. Then rename `hardware/Template.*` to `hardware/MyProjectName.*`.
+This creates the GitHub repo, sets the `NOTION_TOKEN` secret automatically, and clones the project locally. Then rename `hardware/kicad/Template.*` to `hardware/kicad/MyProjectName.*`.
 
 ---
 
@@ -67,15 +76,17 @@ This creates the GitHub repo, sets the `NOTION_TOKEN` secret automatically, and 
 
 ### Hardware
 
-1. Rename `hardware/Template.*` to `hardware/YourProjectName.*`
-2. Open `hardware/YourProjectName.kicad_pro` in KiCad
-3. Place custom footprints in `hardware/components/footprints/`
-4. Export Gerbers to `hardware/gerbers/` (tested with JLCPCB)
+1. Rename `hardware/kicad/Template.*` to `hardware/kicad/YourProjectName.*`
+2. Open `hardware/kicad/YourProjectName.kicad_pro` in KiCad
+3. Place custom footprints in `hardware/kicad/components/footprints/`
+4. Export Gerbers to `hardware/kicad/gerbers/` (tested with JLCPCB)
+5. Optional: enclosure in `hardware/cad/case.scad` — board dimensions eintragen,
+   in OpenSCAD öffnen (`openscad hardware/cad/case.scad`), STL exportieren
 
 ### Notion BOM Sync
 
 Automatically syncs all schematic components (`in_bom = yes`) to your Notion
-**Bauteil-Bibliothek** on every push when `hardware/*.kicad_sch` changes.
+**Bauteil-Bibliothek** on every push when `hardware/kicad/*.kicad_sch` changes.
 
 If you used `new_project.sh`, the `NOTION_TOKEN` secret is already set.
 If you created the repo manually via "Use this template", set it once:

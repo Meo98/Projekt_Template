@@ -19,14 +19,17 @@ project/
 │   │   └── log_fade.py    # Logarithmic PWM fade helper
 │   ├── lib/               # Third-party MicroPython libraries (e.g. from PyPI)
 │   └── utils/             # Small helper functions (math, conversion, etc.)
-├── hardware/              # KiCad project
-│   ├── *.kicad_pro        # KiCad project file
-│   ├── *.kicad_sch        # Schematic
-│   ├── *.kicad_pcb        # PCB layout
-│   ├── components/        # Custom KiCad symbol + footprint libraries
-│   │   └── footprints/    # *.pretty folders go here
-│   ├── datasheets/        # PDF datasheets for all components
-│   └── gerbers/           # Manufacturing files for PCB order (auto-generated)
+├── hardware/              # Hardware design (electrical + mechanical)
+│   ├── kicad/             # KiCad project (electrical)
+│   │   ├── *.kicad_pro    # KiCad project file
+│   │   ├── *.kicad_sch    # Schematic
+│   │   ├── *.kicad_pcb    # PCB layout
+│   │   ├── components/    # Custom KiCad symbol + footprint libraries
+│   │   │   └── footprints/  # *.pretty folders go here
+│   │   └── gerbers/       # Manufacturing files for PCB order (auto-generated)
+│   ├── cad/               # Mechanical CAD
+│   │   └── case.scad      # Parametric OpenSCAD enclosure
+│   └── datasheets/        # PDF datasheets for all components (vendor reference)
 ├── scripts/               # Automation scripts (not deployed to Pico)
 │   └── sync_bom_to_notion.py
 └── .github/workflows/     # GitHub Actions CI/CD
@@ -167,23 +170,30 @@ fader.set_value(50)                        # jump to middle instantly
 
 ## Hardware
 
-Rename the KiCad files in `hardware/` from `Template.*` to your project name.
+Rename the KiCad files in `hardware/kicad/` from `Template.*` to your project name.
 
 | Folder | Contents |
 |---|---|
-| `hardware/components/footprints/` | Custom `.pretty` footprint libraries (ZIP extracted from SnapEDA etc.) |
-| `hardware/datasheets/` | PDF datasheets for every component on the schematic |
-| `hardware/gerbers/` | Gerber + drill files for PCB ordering (JLCPCB compatible) |
+| `hardware/kicad/` | KiCad project (`.kicad_pro/_sch/_pcb`), lib-tables |
+| `hardware/kicad/components/footprints/` | Custom `.pretty` footprint libraries (ZIP extracted from SnapEDA etc.) |
+| `hardware/kicad/gerbers/` | Gerber + drill files for PCB ordering (JLCPCB compatible) |
+| `hardware/cad/` | Mechanical CAD — `case.scad` (parametric OpenSCAD enclosure) |
+| `hardware/datasheets/` | PDF datasheets for every component on the schematic (vendor reference) |
+
+> **`${KIPRJMOD}`-Hinweis**: KiCads lib-tables referenzieren Bibliotheken über
+> `${KIPRJMOD}/components/...` (relativ zum `.kicad_pro`-Ordner). Da `.kicad_pro`
+> und `components/` zusammen in `hardware/kicad/` liegen, bleiben die Pfade gültig.
+> Verschiebe sie nie einzeln.
 
 **fp-lib-table:** Project-specific footprint libraries are registered in
-`hardware/fp-lib-table` using the `${KIPRJMOD}` relative path so the project
+`hardware/kicad/fp-lib-table` using the `${KIPRJMOD}` relative path so the project
 works on any machine without reconfiguring KiCad.
 
 ---
 
 ## Notion BOM Sync (GitHub Actions)
 
-On every push that modifies `hardware/*.kicad_sch`, GitHub Actions automatically
+On every push that modifies `hardware/kicad/*.kicad_sch`, GitHub Actions automatically
 parses the schematic and syncs all `in_bom=yes` components to the shared
 Notion **Bauteil-Bibliothek** database.
 

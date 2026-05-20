@@ -1,0 +1,23 @@
+# Python / MicroPython
+__pycache__/
+*.pyc
+*.pyo
+
+# KiCad (generische Globs — greifen auch in hardware/kicad/)
+**/*-backups/
+**/*-bak/
+**/*.kicad_prl
+**/.history/
+**/fp-info-cache
+**/*.lck
+**/.~lock*
+
+# CAD: nur generierte Outputs im cad/-Ordner (NICHT KiCad-3D-Modelle)
+hardware/cad/*.stl
+hardware/cad/*.step
+hardware/cad/*.dxf
+
+# Editor / OS
+*.code-workspace
+.DS_Store
+Thumbs.db

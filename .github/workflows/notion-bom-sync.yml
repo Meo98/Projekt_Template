@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - "hardware/*.kicad_sch"
+      - "hardware/kicad/*.kicad_sch"
       - "scripts/sync_notion.py"
-  workflow_dispatch:
+  workflow_dispatch: # allow manual trigger from GitHub UI
 
 jobs:
   sync:
